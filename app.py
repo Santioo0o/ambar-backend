@@ -89,11 +89,14 @@ def not_found(e):
 def internal_error(e):
     return jsonify({'error': 'Error interno del servidor'}), 500
 
-# Inicialización
+# Inicialización de usuarios para asegurar que existan en Atlas cuando se despliega en Render
+try:
+    with app.app_context():
+        create_initial_users()
+except Exception as e:
+    print("Warning: Could not create initial users:", e)
+
 if __name__ == '__main__':
-    # Crear usuarios iniciales
-    create_initial_users()
-    
-    # Iniciar servidor
+    # Iniciar servidor local
     port = int(os.getenv('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
